@@ -18,7 +18,7 @@ def validate_token():
     if "Token" in request.headers:
         token = request.headers['Token']
         if token in tokens:
-            pass
+            return make_response(jsonify({'code':secret_code}),200)
         else:
             return make_response(jsonify({'error':'token not found'}), 400)
     else:
