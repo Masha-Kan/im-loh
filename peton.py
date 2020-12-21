@@ -31,11 +31,6 @@ def secret_function():
     print("test")
 '''
 
-
-
-
-
-
 secret = os.urandom(512)
 tokens_amount = 0
 tokens_g = token_gen(token_gen)
