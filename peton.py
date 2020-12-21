@@ -1,12 +1,12 @@
 import hmac
 import os
 from flask import Flask, make_response, jsonify
-
+import hashlib
 app = Flask(__name__)
 
 
 def token_gen(tokens):
-    h = hmac.new(secret, tokens.to_bytes(8, 'big'))
+    h = hmac.new(secret, tokens.to_bytes(8, 'big'), hashlib.sha1)
     while True:
         tokens += 1
         h.update(tokens.to_bytes(8, 'big'))
@@ -33,7 +33,7 @@ def secret_function():
 
 secret = os.urandom(512)
 tokens_amount = 0
-tokens_g = token_gen(token_gen)
+tokens_g = token_gen(tokens_amount)
 tokens = []
 my_token = next(tokens_g)
 tokens.append(my_token)
