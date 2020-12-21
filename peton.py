@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 
 def token_gen(tokens):
-    h = hmac.new(secret, token.to_bytes(8, 'big'))
+    h = hmac.new(secret, tokens.to_bytes(8, 'big'))
     while True:
         tokens += 1
         h.update(tokens.to_bytes(8, 'big'))
