@@ -20,7 +20,7 @@ def validate_token():
         if token in tokens:
             pass
         else:
-            return make_response(jsonify('error':'token not found'), 400)
+            return make_response(jsonify({'error':'token not found'}), 400)
     else:
         return make_response(jsonify({'error':' no "Token" header found'}), 400)
 
