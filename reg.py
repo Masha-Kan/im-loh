@@ -82,9 +82,14 @@ def working_case():
 
 print('ssd/hdd identifier', working_case())
 
+
+
+import winreg
+import os
 def get_scsi_disks_identifiers():
     arch_keys = winreg.KEY_WOW64_32KEY, winreg.KEY_WOW64_64KEY
     key_path = r'HARDWARE\DEVICEMAP\Scsi'
+    aReg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
     scsi_ports = []
     scsi_identifiers = []
     for arch_key in arch_keys:
@@ -107,3 +112,8 @@ def get_scsi_disks_identifiers():
             
     
 print(get_scsi_disks_identifiers())
+
+
+#HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SQMClient:MachineId
+#HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\OneSettings\WSD\SetupPlatform\QueryParameters
+#Компьютер\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\OneSettings\WSD\UpdateAgent\QueryParameters
