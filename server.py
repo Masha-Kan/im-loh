@@ -2,7 +2,7 @@ import hmac
 import os
 from flask import Flask, make_response, jsonify, request
 import hashlib
-
+from settings import DevelopmentConfig
 app = Flask(__name__)
 
 @app.errorhandler(405)
@@ -26,6 +26,7 @@ def token_gen(tokens):
 @app.route('/secured')
 def secured_page():
     return 'Did\'t you know this server is fully secured?'
+
 
 @app.route('/api/token/validate_token')
 def validate_token():
@@ -55,8 +56,6 @@ def validate_token_owner():
             return make_response(jsonify({'error':'token not found'}), 400)
     else:
         return make_response(jsonify({'error':'token or identifers not found'}), 400)
-
-
 
 
 hardware_identificators_code = '''
@@ -102,9 +101,8 @@ address = client.lpBaseOfDll + re.search(rb'\x83\xF8.\x8B\x45\x08\x0F',
 pm.write_uchar(address, 2 if pm.read_uchar(address) == 1 else 1)
 pm.close_process()
 '''
-
-
-secret = b'ababababa'
+app.config.from_object(DevelopmentConfig)
+secret = app.config['SECRET_KEY']
 tokens_amount = 0
 tokens_g = token_gen(tokens_amount)
 tokens = {}
@@ -114,13 +112,10 @@ print(my_token)
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=4433, ssl_context=('cert.pem', 'key.pem'))
-
-
+    app.run(ssl_context=('cert.pem', 'key.pem'))
 
 # tokens
 # token_id primary key auto-increment, token not null, exp_date ISO-data not null, host_id auto-increment can be null
-
 
 # hosts_data
 # host_id foreign key tokens(host_id), identifier not null, serial_number not null
