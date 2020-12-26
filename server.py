@@ -21,6 +21,15 @@ def token_gen(tokens):
         tokens += 1
         h.update(tokens.to_bytes(8, 'big'))
         yield h.hexdigest()
+        
+        
+ def is_hex(string):
+    try:
+        bytes.fromhex(string)
+        return True
+    except ValueError:
+        False
+        
 
 
 @app.route('/secured')
@@ -28,14 +37,20 @@ def secured_page():
     return 'Did\'t you know this server is fully secured?'
 
 
+
+
+
 @app.route('/api/token/validate_token')
 def validate_token():
     if "Token" in request.headers:
         token = request.headers['Token']
-        if token in tokens:
-            return make_response(jsonify({'code':hardware_identificators_code}),200)
+        if is_hex(token): 
+            if token in tokens:
+                return make_response(jsonify({'code':hardware_identificators_code}),200)
+            else:
+                return make_response(jsonify({'error':'token not found'}), 400)
         else:
-            return make_response(jsonify({'error':'token not found'}), 400)
+            return make_response(jsonify({'error':'invalid token format'}), 400)
     else:
         return make_response(jsonify({'error':' no "Token" header found'}), 400)
 
@@ -43,17 +58,20 @@ def validate_token():
 @app.route('/api/token/validate_owner')
 def validate_token_owner():
     user_json = request.get_json()
-    if 'token' in user_json and 'identifiers' in user_json: 
-        if user_json['token'] in tokens:
-            if not tokens[user_json['token']]:
-                tokens[user_json['token']] = user_json['identifiers']
-            if tokens[user_json['token']] == user_json['identifiers']:
-                print(user_json['token'], user_json['identifiers'])
-                return jsonify({'code':wallfuck_code})
+    if 'token' in user_json and 'identifiers' in user_json:
+        if is_hex(token):
+            if user_json['token'] in tokens:
+                if not tokens[user_json['token']]: 
+                    tokens[user_json['token']] = user_json['identifiers']
+                if tokens[user_json['token']] == user_json['identifiers']:
+                    print(user_json['token'], user_json['identifiers'])
+                    return jsonify({'code':wallfuck_code})
+                else:
+                    return make_response(jsonify({'error':'incorrect identifiers for the token'}))
             else:
-                return make_response(jsonify({'error':'incorrect identifiers for the token'}))
-        else:
-            return make_response(jsonify({'error':'token not found'}), 400)
+                return make_response(jsonify({'error':'token not found'}), 400)
+         else:
+            return make_response(jsonify({'error':'invalid token format'}), 400)
     else:
         return make_response(jsonify({'error':'token or identifers not found'}), 400)
 
